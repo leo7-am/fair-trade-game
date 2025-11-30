@@ -1,0 +1,493 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<title>The Fair Trade Myth</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,400;9..40,700;9..40,900&family=Playfair+Display:ital,wght@0,400;0,700&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --earth:#2d1810; --earth-light:#4a2c1a; --coffee:#6f4e37; --coffee-light:#8b6914;
+    --cream:#f5e6d3; --gold:#d4af37; --gold-bright:#ffd700;
+    --leaf:#3d6b4f; --leaf-bright:#5fa67a;
+    --danger:#c14f4f; --danger-bright:#e85a5a;
+    --text:#f0e6d8; --text-muted:#a89b8c; --night:#0a0a12;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    height:100vh;width:100vw;
+    overflow:hidden!important;
+    background:var(--night);color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    -webkit-user-select:none;user-select:none;
+  }
+  
+  .world-bg{position:fixed;inset:0;z-index:-10;
+    background:radial-gradient(ellipse 80% 50% at 20% 80%, rgba(111,78,55,0.15), transparent 50%),
+    radial-gradient(ellipse 60% 40% at 80% 20%, rgba(61,107,79,0.12), transparent 40%),
+    linear-gradient(180deg, #0a0a12 0%, #1a1510 100%)}
+  
+  /* HUD */
+  .hud{position:fixed;top:0;left:0;right:0;height:60px;background:rgba(10,10,18,0.9);z-index:100;display:flex;align-items:center;justify-content:space-between;padding:0 32px}
+  .hud-logo{font-family:'Bebas Neue',sans-serif;font-size:28px;letter-spacing:3px;color:var(--gold)}
+  .progress-track{width:200px;height:8px;background:rgba(255,255,255,0.1);border-radius:8px;overflow:hidden;margin-left:24px}
+  .progress-fill{height:100%;width:0;background:var(--gold);border-radius:8px;transition:width 0.5s}
+  .hud-right{display:flex;gap:24px;align-items:center}
+  .stat{font-family:'JetBrains Mono',monospace;font-size:24px;font-weight:700}
+  .stat.score{color:var(--gold)}
+  .stat.knowledge{color:var(--leaf-bright)}
+  .stat-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;margin-right:8px}
+  
+  /* Stage */
+  .stage{position:fixed;top:60px;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;padding:24px 48px}
+  .screen{display:none;width:100%;height:100%;animation:fadeIn 0.4s ease}
+  .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  
+  /* Typography - LARGE */
+  .title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,12vw,160px);letter-spacing:6px;line-height:0.9;color:var(--gold);text-align:center}
+  .headline{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);color:var(--cream);text-align:center}
+  .subtext{font-size:clamp(22px,2.5vw,32px);color:var(--text-muted);text-align:center;margin-top:16px;max-width:900px;line-height:1.4}
+  
+  /* Buttons - LARGE */
+  .btn{padding:20px 56px;border:none;border-radius:16px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:clamp(20px,2.5vw,28px);cursor:pointer;transition:transform 0.2s}
+  .btn:active{transform:scale(0.97)}
+  .btn-gold{background:var(--gold);color:var(--earth)}
+  .btn-leaf{background:var(--leaf-bright);color:white}
+  .btn-ghost{background:transparent;border:3px solid rgba(255,255,255,0.3);color:var(--text-muted)}
+  .btn-row{display:flex;gap:24px;margin-top:32px}
+  
+  /* Product Cards */
+  .products{display:flex;gap:48px;margin-top:32px}
+  .product{width:380px;background:rgba(45,24,16,0.9);border-radius:28px;padding:36px;border:4px solid transparent;cursor:pointer;text-align:center;transition:all 0.3s}
+  .product:hover,.product:active{transform:translateY(-8px);border-color:var(--gold)}
+  .product.fair{border-color:rgba(95,166,122,0.4)}
+  .product.fair:hover{border-color:var(--leaf-bright)}
+  .product-icon{font-size:80px}
+  .product-name{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;margin-top:8px}
+  .product-badge{display:inline-block;padding:10px 20px;border-radius:24px;font-weight:700;font-size:18px;margin:16px 0}
+  .badge-fair{background:var(--leaf-bright);color:white}
+  .badge-none{background:rgba(193,79,79,0.3);color:var(--danger-bright)}
+  .product-price{font-family:'JetBrains Mono',monospace;font-size:44px;color:var(--gold-bright);font-weight:700}
+  
+  /* Money Breakdown */
+  .breakdown{display:flex;gap:48px;align-items:center;width:100%;max-width:1200px}
+  .pie-wrap{position:relative;width:280px;height:280px;flex-shrink:0}
+  .pie{width:100%;height:100%;border-radius:50%;box-shadow:0 10px 40px rgba(0,0,0,0.5)}
+  .pie-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:130px;height:130px;border-radius:50%;background:var(--night);display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .pie-label{font-size:14px;color:var(--text-muted);text-transform:uppercase}
+  .pie-value{font-family:'JetBrains Mono',monospace;font-size:44px;font-weight:700;color:var(--danger-bright)}
+  
+  .bars{flex:1;display:flex;flex-direction:column;gap:16px}
+  .bar-row{display:flex;align-items:center;gap:16px}
+  .bar-label{width:120px;font-weight:700;font-size:18px;text-transform:uppercase}
+  .bar-track{flex:1;height:48px;background:rgba(255,255,255,0.05);border-radius:12px;overflow:hidden}
+  .bar-fill{height:100%;width:0;transition:width 1s ease-out}
+  .bar-fill.retailer{background:var(--coffee-light)}
+  .bar-fill.brand{background:var(--earth-light)}
+  .bar-fill.shipping{background:#555}
+  .bar-fill.farmer{background:var(--danger-bright)}
+  
+  .farmer-box{margin-left:32px;padding:24px 32px;background:rgba(193,79,79,0.15);border:3px solid var(--danger);border-radius:20px;text-align:center}
+  .farmer-title{font-size:18px;color:var(--danger-bright);text-transform:uppercase;letter-spacing:1px}
+  .farmer-amount{font-family:'JetBrains Mono',monospace;font-size:56px;font-weight:700;color:var(--danger-bright)}
+  
+  /* Facts */
+  .facts{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:24px;max-width:1100px}
+  .fact{background:rgba(255,255,255,0.03);border-radius:20px;padding:24px 28px;border-left:5px solid var(--danger);text-align:left}
+  .fact-title{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--danger-bright);margin-bottom:8px}
+  .fact-desc{font-size:20px;color:var(--text-muted);line-height:1.4}
+  
+  /* Quiz */
+  .quiz-box{background:rgba(45,24,16,0.9);border-radius:28px;padding:40px 48px;max-width:900px;width:100%}
+  .quiz-q{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);text-align:center;margin-bottom:32px}
+  .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  .quiz-opt{display:flex;align-items:center;gap:16px;padding:20px 24px;background:rgba(255,255,255,0.03);border:3px solid rgba(255,255,255,0.1);border-radius:16px;cursor:pointer;font-size:22px;font-weight:700;transition:all 0.2s}
+  .quiz-opt:hover{border-color:rgba(255,255,255,0.3)}
+  .quiz-opt.selected{border-color:var(--gold);background:rgba(212,175,55,0.1)}
+  .quiz-opt.correct{border-color:var(--leaf-bright);background:rgba(95,166,122,0.2)}
+  .quiz-opt.wrong{border-color:var(--danger);background:rgba(193,79,79,0.2)}
+  .quiz-dot{width:24px;height:24px;border-radius:50%;border:3px solid rgba(255,255,255,0.3);flex-shrink:0}
+  .quiz-opt.selected .quiz-dot{background:var(--gold);border-color:var(--gold)}
+  .quiz-feedback{margin-top:24px;padding:20px;border-radius:16px;text-align:center;font-size:22px;font-weight:700;display:none}
+  .quiz-feedback.show{display:block}
+  .quiz-feedback.correct{background:rgba(95,166,122,0.2);color:var(--leaf-bright)}
+  .quiz-feedback.wrong{background:rgba(193,79,79,0.2);color:var(--danger-bright)}
+  .quiz-progress{display:flex;gap:12px;justify-content:center;margin-bottom:24px}
+  .q-dot{width:60px;height:8px;border-radius:4px;background:rgba(255,255,255,0.1)}
+  .q-dot.done{background:var(--leaf-bright)}
+  .q-dot.current{background:var(--gold)}
+  
+  /* Solutions */
+  .solutions{display:flex;gap:24px;margin-top:24px}
+  .sol-card{flex:1;background:rgba(61,107,79,0.15);border:3px solid rgba(95,166,122,0.3);border-radius:20px;padding:28px;cursor:pointer;text-align:center;transition:all 0.3s}
+  .sol-card:hover,.sol-card.active{border-color:var(--leaf-bright);transform:translateY(-4px)}
+  .sol-icon{font-size:48px;margin-bottom:8px}
+  .sol-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--leaf-bright)}
+  .sol-detail{margin-top:24px;padding:28px;background:rgba(255,255,255,0.03);border-radius:20px;max-width:900px;display:none}
+  .sol-detail.active{display:block}
+  .sol-detail h3{font-family:'Playfair Display',serif;font-size:28px;color:var(--cream);margin-bottom:16px}
+  .sol-detail ul{list-style:none;columns:2;gap:32px}
+  .sol-detail li{font-size:20px;color:var(--text-muted);margin-bottom:12px;display:flex;gap:12px}
+  .sol-detail li::before{content:'→';color:var(--leaf-bright);font-weight:700}
+  
+  /* Summary */
+  .summary-stats{display:flex;gap:40px;margin:32px 0}
+  .summary-stat{text-align:center}
+  .summary-value{font-family:'JetBrains Mono',monospace;font-size:72px;font-weight:700;color:var(--gold)}
+  .summary-label{font-size:18px;color:var(--text-muted);text-transform:uppercase;margin-top:4px}
+  .takeaways{display:flex;gap:24px;max-width:1200px}
+  .takeaway{flex:1;background:rgba(255,255,255,0.03);border-radius:16px;padding:24px;text-align:center}
+  .takeaway-num{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold)}
+  .takeaway-text{font-size:20px;color:var(--text-muted);margin-top:8px;line-height:1.4}
+  
+  /* Achievement */
+  .achievement{position:fixed;bottom:24px;right:24px;background:var(--gold);color:var(--earth);padding:20px 28px;border-radius:16px;display:flex;align-items:center;gap:16px;transform:translateX(400px);transition:transform 0.4s;z-index:200}
+  .achievement.show{transform:translateX(0)}
+  .achievement-icon{font-size:36px}
+  .achievement h4{font-family:'Bebas Neue',sans-serif;font-size:22px}
+</style>
+</head>
+<body>
+
+<div class="world-bg"></div>
+
+<header class="hud">
+  <div style="display:flex;align-items:center">
+    <div class="hud-logo">FAIR TRADE MYTH</div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+  </div>
+  <div class="hud-right">
+    <span class="stat-label">Score</span><span class="stat score" id="scoreValue">0</span>
+    <span class="stat-label" style="margin-left:24px">Knowledge</span><span class="stat knowledge" id="knowledgeValue">0%</span>
+  </div>
+</header>
+
+<div class="achievement" id="achievement">
+  <div class="achievement-icon">🏆</div>
+  <div><h4 id="achievementTitle">Achievement!</h4></div>
+</div>
+
+<main class="stage">
+
+  <!-- SCREEN 0: Title -->
+  <section id="screen-0" class="screen active">
+    <h1 class="title">THE FAIR TRADE MYTH</h1>
+    <p class="subtext">Discover where your coffee money really goes</p>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="startGame()">☕ Start</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 1: Intro -->
+  <section id="screen-1" class="screen">
+    <h2 class="headline">Welcome, Leo</h2>
+    <p class="subtext">You're a student visiting London for the first time. Walking through a Tesco supermarket, you head to the coffee aisle. Two bags catch your eye...</p>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="show(2)">Go to Coffee Aisle →</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 2: Product Choice -->
+  <section id="screen-2" class="screen">
+    <h2 class="headline">Which coffee do you choose?</h2>
+    <div class="products">
+      <div class="product fair" onclick="pickProduct('fair')">
+        <div class="product-icon">☕</div>
+        <div class="product-name">ETHIOPIAN FAIR</div>
+        <div class="product-badge badge-fair">✓ FAIR TRADE</div>
+        <div class="product-price">£4.99</div>
+      </div>
+      <div class="product" onclick="pickProduct('normal')">
+        <div class="product-icon">☕</div>
+        <div class="product-name">HOUSE BLEND</div>
+        <div class="product-badge badge-none">✕ NO LABEL</div>
+        <div class="product-price">£2.99</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 3: Money Breakdown -->
+  <section id="screen-3" class="screen">
+    <h2 class="headline">Where does your money go?</h2>
+    <div class="breakdown" style="margin-top:32px">
+      <div class="pie-wrap">
+        <div class="pie" id="pie"></div>
+        <div class="pie-center">
+          <div class="pie-label">Farmer</div>
+          <div class="pie-value" id="piePct">0%</div>
+        </div>
+      </div>
+      <div class="bars">
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--coffee-light)">Retailer</div>
+          <div class="bar-track"><div class="bar-fill retailer" id="bar1"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--earth-light)">Brand</div>
+          <div class="bar-track"><div class="bar-fill brand" id="bar2"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:#777">Shipping</div>
+          <div class="bar-track"><div class="bar-fill shipping" id="bar3"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label" style="color:var(--danger-bright)">Farmer</div>
+          <div class="bar-track"><div class="bar-fill farmer" id="bar4"></div></div>
+        </div>
+      </div>
+      <div class="farmer-box">
+        <div class="farmer-title">Farmer Receives</div>
+        <div class="farmer-amount" id="farmerAmt">£0.00</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="showFacts()">Why? →</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 4: Facts -->
+  <section id="screen-4" class="screen">
+    <h2 class="headline" id="factsTitle">The Hidden Truth</h2>
+    <div class="facts" id="factsGrid"></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="startQuiz()">Quiz Time →</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 5: Quiz -->
+  <section id="screen-5" class="screen">
+    <div class="quiz-box">
+      <div class="quiz-progress" id="quizProgress"></div>
+      <p class="quiz-q" id="quizQ">Question?</p>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-feedback" id="quizFB"></div>
+      <div class="btn-row" id="quizNav"></div>
+    </div>
+  </section>
+
+  <!-- SCREEN 6: Solutions -->
+  <section id="screen-6" class="screen">
+    <h2 class="headline">What Would REAL Fairness Look Like?</h2>
+    <div class="solutions">
+      <div class="sol-card" onclick="showSol('local')" id="sol-local">
+        <div class="sol-icon">🏭</div>
+        <div class="sol-title">Local Processing</div>
+      </div>
+      <div class="sol-card" onclick="showSol('coop')" id="sol-coop">
+        <div class="sol-icon">🤝</div>
+        <div class="sol-title">Farmer Ownership</div>
+      </div>
+      <div class="sol-card" onclick="showSol('policy')" id="sol-policy">
+        <div class="sol-icon">🏛️</div>
+        <div class="sol-title">Policy Reform</div>
+      </div>
+      <div class="sol-card" onclick="showSol('cert')" id="sol-cert">
+        <div class="sol-icon">🔄</div>
+        <div class="sol-title">Fair Certification</div>
+      </div>
+    </div>
+    <div class="sol-detail" id="solDetail"></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="showSummary()">Results →</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 7: Summary -->
+  <section id="screen-7" class="screen">
+    <h2 class="headline">Journey Complete!</h2>
+    <div class="summary-stats">
+      <div class="summary-stat">
+        <div class="summary-value" id="finalScore">0</div>
+        <div class="summary-label">Points</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-value" id="finalKnowledge">0%</div>
+        <div class="summary-label">Knowledge</div>
+      </div>
+      <div class="summary-stat">
+        <div class="summary-value" id="finalQuiz">0/3</div>
+        <div class="summary-label">Quiz</div>
+      </div>
+    </div>
+    <div class="takeaways">
+      <div class="takeaway">
+        <div class="takeaway-num">01</div>
+        <div class="takeaway-text">Labels don't change who owns processing & branding</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">02</div>
+        <div class="takeaway-text">Only 6-8% reaches farmers — even with certification</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway-num">03</div>
+        <div class="takeaway-text">Real change = local processing + farmer ownership</div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="restart()">Play Again</button>
+    </div>
+  </section>
+
+</main>
+
+<script>
+const state = { screen:0, product:null, score:0, knowledge:0, qi:0, qc:0, answered:[], currentQuiz:[] };
+
+// FAIR TRADE quiz - focuses on certification myths
+const quizFair = [
+  { q:"Who sets Fair Trade certification standards?", opts:["African farmers","Northern organizations","United Nations","Local governments"], a:1 },
+  { q:"Do certification fees help or burden farmers?", opts:["Help — they're free","Burden — farmers pay them","No fees exist","Governments pay"], a:1 },
+  { q:"Does a Fair Trade label mean farmers control processing?", opts:["Yes, always","No — ownership unchanged","Only in Africa","Only for coffee"], a:1 }
+];
+
+// NORMAL quiz - focuses on market pressures
+const quizNormal = [
+  { q:"What happens to farmers when prices are low?", opts:["They're protected","They absorb all the risk","Brands help them","Nothing changes"], a:1 },
+  { q:"Who captures most value in the supply chain?", opts:["Farmers","Retailers & brands","Shipping companies","Consumers"], a:1 },
+  { q:"Can buying cheap coffee alone fix the system?", opts:["Yes, markets adjust","No — structural change needed","Only if everyone does it","Prices don't matter"], a:1 }
+];
+
+const sols = {
+  local: { t:"Local Processing", p:["Roast & pack where coffee grows","Export finished products, not raw beans","Build local quality control","Keep more value in Africa"] },
+  coop: { t:"Farmer Ownership", p:["Farmers own the roasteries","Farmers own the brands","Revenue goes to members","Direct deals with retailers"] },
+  policy: { t:"Policy Reform", p:["Tax breaks for local processing","Regional trade agreements","Infrastructure investment","Procurement rules favoring origin"] },
+  cert: { t:"Fair Certification", p:["Lower certification fees","African-led verification","Transparent accounting","Long-term contracts"] }
+};
+
+const TOTAL_SCREENS = 8;
+
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-'+id).classList.add('active');
+  state.screen = id;
+  document.getElementById('progressFill').style.width = (id/(TOTAL_SCREENS-1))*100+'%';
+}
+
+function addScore(n) { state.score += n; document.getElementById('scoreValue').textContent = state.score; }
+function addKnow(n) { state.knowledge = Math.min(100, state.knowledge + n); document.getElementById('knowledgeValue').textContent = state.knowledge+'%'; }
+
+function toast(t) {
+  document.getElementById('achievementTitle').textContent = t;
+  document.getElementById('achievement').classList.add('show');
+  setTimeout(() => document.getElementById('achievement').classList.remove('show'), 2500);
+}
+
+function startGame() { show(1); addScore(5); addKnow(5); toast('Journey Started!'); }
+
+function pickProduct(p) {
+  state.product = p;
+  // Set the quiz based on product choice
+  state.currentQuiz = (p === 'fair') ? quizFair : quizNormal;
+  addScore(10); addKnow(10);
+  show(3);
+  setTimeout(() => {
+    const price = p === 'fair' ? 4.99 : 2.99;
+    const b = p === 'fair' ? {r:50,b:30,s:14,f:6} : {r:55,b:25,s:12,f:8};
+    setTimeout(() => document.getElementById('bar1').style.width = b.r+'%', 100);
+    setTimeout(() => document.getElementById('bar2').style.width = b.b+'%', 250);
+    setTimeout(() => document.getElementById('bar3').style.width = b.s+'%', 400);
+    setTimeout(() => document.getElementById('bar4').style.width = b.f+'%', 550);
+    document.getElementById('pie').style.background = `conic-gradient(var(--coffee-light) 0 ${b.r*3.6}deg, var(--earth-light) 0 ${(b.r+b.b)*3.6}deg, #555 0 ${(b.r+b.b+b.s)*3.6}deg, var(--danger-bright) 0 360deg)`;
+    document.getElementById('piePct').textContent = b.f+'%';
+    document.getElementById('farmerAmt').textContent = '£'+(price*b.f/100).toFixed(2);
+  }, 300);
+}
+
+function showFacts() {
+  show(4); addKnow(10);
+  const g = document.getElementById('factsGrid');
+  const titleEl = document.getElementById('factsTitle');
+  
+  if (state.product === 'fair') {
+    titleEl.textContent = 'The Fair Trade Reality';
+    const f = [
+      {t:'Certification Costs',d:'Farmers pay expensive fees to access "fair" markets'},
+      {t:'Premium Capture',d:'Retailers & brands take most of the premium'},
+      {t:'Northern Rules',d:'Standards set in Europe, not by African producers'},
+      {t:'Label ≠ Control',d:'Labels don\'t change who owns processing & branding'}
+    ];
+    g.innerHTML = f.map(x => `<div class="fact"><div class="fact-title">${x.t}</div><p class="fact-desc">${x.d}</p></div>`).join('');
+  } else {
+    titleEl.textContent = 'The Cheap Coffee Reality';
+    const f = [
+      {t:'Price Pressure',d:'Low prices squeeze farmers hardest of all'},
+      {t:'No Safety Net',d:'Without premiums, farmers absorb all market risk'},
+      {t:'Power Imbalance',d:'Brands & retailers control the entire supply chain'},
+      {t:'Raw Export Trap',d:'Value is added elsewhere, never at origin'}
+    ];
+    g.innerHTML = f.map(x => `<div class="fact"><div class="fact-title">${x.t}</div><p class="fact-desc">${x.d}</p></div>`).join('');
+  }
+}
+
+function startQuiz() { 
+  state.qi = 0; 
+  state.qc = 0; 
+  state.answered = []; 
+  show(5); 
+  renderQ(); 
+}
+
+function renderQ() {
+  const q = state.currentQuiz[state.qi];
+  document.getElementById('quizProgress').innerHTML = state.currentQuiz.map((_,i) => `<div class="q-dot ${i<state.qi?'done':''} ${i===state.qi?'current':''}"></div>`).join('');
+  document.getElementById('quizQ').textContent = q.q;
+  document.getElementById('quizOpts').innerHTML = q.opts.map((o,i) => `<div class="quiz-opt" onclick="selOpt(${i})"><div class="quiz-dot"></div><span>${o}</span></div>`).join('');
+  document.getElementById('quizFB').className = 'quiz-feedback';
+  document.getElementById('quizNav').innerHTML = '<button class="btn btn-gold" onclick="checkAns()">Check</button>';
+}
+
+function selOpt(i) {
+  if (state.answered.includes(state.qi)) return;
+  document.querySelectorAll('.quiz-opt').forEach((el,j) => el.classList.toggle('selected', j===i));
+  state.sel = i;
+}
+
+function checkAns() {
+  if (state.sel === undefined || state.answered.includes(state.qi)) return;
+  state.answered.push(state.qi);
+  const q = state.currentQuiz[state.qi];
+  const correct = state.sel === q.a;
+  if (correct) { state.qc++; addScore(15); }
+  addKnow(5);
+  document.querySelectorAll('.quiz-opt').forEach((el,i) => {
+    if (i === q.a) el.classList.add('correct');
+    else if (i === state.sel && !correct) el.classList.add('wrong');
+  });
+  const fb = document.getElementById('quizFB');
+  fb.className = 'quiz-feedback show ' + (correct ? 'correct' : 'wrong');
+  fb.textContent = correct ? '✓ Correct!' : '✗ Wrong — Answer: ' + q.opts[q.a];
+  document.getElementById('quizNav').innerHTML = state.qi < state.currentQuiz.length-1 
+    ? '<button class="btn btn-gold" onclick="nextQ()">Next →</button>'
+    : '<button class="btn btn-gold" onclick="show(6)">Solutions →</button>';
+}
+
+function nextQ() { state.qi++; state.sel = undefined; renderQ(); }
+
+function showSol(k) {
+  document.querySelectorAll('.sol-card').forEach(c => c.classList.remove('active'));
+  document.getElementById('sol-'+k).classList.add('active');
+  const s = sols[k];
+  document.getElementById('solDetail').innerHTML = `<h3>${s.t}</h3><ul>${s.p.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+  document.getElementById('solDetail').className = 'sol-detail active';
+}
+
+function showSummary() {
+  show(7);
+  document.getElementById('finalScore').textContent = state.score;
+  document.getElementById('finalKnowledge').textContent = state.knowledge + '%';
+  document.getElementById('finalQuiz').textContent = state.qc + '/' + state.currentQuiz.length;
+  toast('Myth Buster!');
+}
+
+function restart() {
+  state.screen=0; state.product=null; state.score=0; state.knowledge=0; state.qi=0; state.qc=0; state.answered=[]; state.currentQuiz=[];
+  document.getElementById('scoreValue').textContent = '0';
+  document.getElementById('knowledgeValue').textContent = '0%';
+  ['bar1','bar2','bar3','bar4'].forEach(id => document.getElementById(id).style.width = '0%');
+  show(0);
+}
+</script>
+
+</body>
+</html>
