@@ -20,6 +20,8 @@
     background:var(--night);color:var(--text);
     font-family:'DM Sans',sans-serif;
     -webkit-user-select:none;user-select:none;
+    -webkit-tap-highlight-color:transparent;
+    touch-action:manipulation;
   }
   
   .world-bg{position:fixed;inset:0;z-index:-10;
@@ -39,23 +41,28 @@
   .stat-label{font-size:12px;color:var(--text-muted);text-transform:uppercase;margin-right:8px}
   
   /* Stage */
-  .stage{position:fixed;top:60px;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;padding:24px 48px}
-  .screen{display:none;width:100%;height:100%;animation:fadeIn 0.4s ease}
-  .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center}
+  .stage{position:fixed;top:60px;left:0;right:0;bottom:0;display:flex;align-items:center;justify-content:center;padding:24px 48px;overflow-y:auto;overflow-x:hidden}
+  .screen{display:none;width:100%;min-height:100%;animation:fadeIn 0.4s ease}
+  .screen.active{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px 0}
   @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+  
+  /* Scrollable content wrapper */
+  .scroll-content{width:100%;max-height:100%;display:flex;flex-direction:column;align-items:center}
   
   /* Typography - LARGE */
   .title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,12vw,160px);letter-spacing:6px;line-height:0.9;color:var(--gold);text-align:center}
   .headline{font-family:'Playfair Display',serif;font-size:clamp(36px,5vw,56px);color:var(--cream);text-align:center}
   .subtext{font-size:clamp(22px,2.5vw,32px);color:var(--text-muted);text-align:center;margin-top:16px;max-width:900px;line-height:1.4}
   
-  /* Buttons - LARGE */
-  .btn{padding:20px 56px;border:none;border-radius:16px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:clamp(20px,2.5vw,28px);cursor:pointer;transition:transform 0.2s}
-  .btn:active{transform:scale(0.97)}
+  /* Buttons - LARGE & Touch-friendly */
+  .btn{padding:20px 56px;border:none;border-radius:16px;font-family:'DM Sans',sans-serif;font-weight:700;font-size:clamp(20px,2.5vw,28px);cursor:pointer;transition:transform 0.2s,opacity 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:60px}
+  .btn:hover{opacity:0.9}
+  .btn:active{transform:scale(0.97);opacity:0.8}
   .btn-gold{background:var(--gold);color:var(--earth)}
   .btn-leaf{background:var(--leaf-bright);color:white}
   .btn-ghost{background:transparent;border:3px solid rgba(255,255,255,0.3);color:var(--text-muted)}
-  .btn-row{display:flex;gap:24px;margin-top:32px}
+  .btn-ghost:hover{border-color:rgba(255,255,255,0.5)}
+  .btn-row{display:flex;gap:24px;margin-top:32px;flex-wrap:wrap;justify-content:center}
 
   /* Name Input */
   .input-name{
@@ -76,12 +83,26 @@
   .input-name:focus{border-color:var(--gold)}
   .input-name::placeholder{color:var(--text-muted)}
   
-  /* Product Cards */
-  .products{display:flex;gap:48px;margin-top:32px}
-  .product{width:380px;background:rgba(45,24,16,0.9);border-radius:28px;padding:36px;border:4px solid transparent;cursor:pointer;text-align:center;transition:all 0.3s}
+  /* Story Character */
+  .character{display:flex;align-items:flex-start;gap:24px;max-width:900px;margin-top:24px}
+  .char-avatar{width:100px;height:100px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--coffee));display:flex;align-items:center;justify-content:center;font-size:48px;flex-shrink:0;border:4px solid rgba(255,255,255,0.1)}
+  .char-bubble{background:rgba(255,255,255,0.05);border-radius:20px;padding:24px 28px;position:relative;flex:1}
+  .char-bubble::before{content:'';position:absolute;left:-12px;top:30px;border:12px solid transparent;border-right-color:rgba(255,255,255,0.05)}
+  .char-name{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--gold);margin-bottom:8px}
+  .char-text{font-size:20px;color:var(--text-muted);line-height:1.5}
+  
+  /* Story Choices - Touch-friendly */
+  .story-choices{display:flex;flex-direction:column;gap:16px;margin-top:24px;width:100%;max-width:700px}
+  .story-choice{padding:20px 28px;background:rgba(255,255,255,0.03);border:3px solid rgba(255,255,255,0.1);border-radius:16px;cursor:pointer;text-align:left;font-size:20px;font-weight:700;transition:all 0.3s;display:flex;align-items:center;gap:16px;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:70px}
+  .story-choice:hover,.story-choice:active{border-color:var(--gold);background:rgba(212,175,55,0.1);transform:translateX(8px)}
+  .choice-icon{font-size:28px;flex-shrink:0}
+  
+  /* Product Cards - Touch-friendly */
+  .products{display:flex;gap:48px;margin-top:32px;flex-wrap:wrap;justify-content:center}
+  .product{width:380px;background:rgba(45,24,16,0.9);border-radius:28px;padding:36px;border:4px solid transparent;cursor:pointer;text-align:center;transition:all 0.3s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
   .product:hover,.product:active{transform:translateY(-8px);border-color:var(--gold)}
   .product.fair{border-color:rgba(95,166,122,0.4)}
-  .product.fair:hover{border-color:var(--leaf-bright)}
+  .product.fair:hover,.product.fair:active{border-color:var(--leaf-bright)}
   .product-icon{font-size:80px}
   .product-name{font-family:'Bebas Neue',sans-serif;font-size:36px;letter-spacing:2px;margin-top:8px}
   .product-badge{display:inline-block;padding:10px 20px;border-radius:24px;font-weight:700;font-size:18px;margin:16px 0}
@@ -122,8 +143,8 @@
   .quiz-box{background:rgba(45,24,16,0.9);border-radius:28px;padding:40px 48px;max-width:900px;width:100%}
   .quiz-q{font-family:'Playfair Display',serif;font-size:clamp(28px,3.5vw,40px);text-align:center;margin-bottom:32px}
   .quiz-opts{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-  .quiz-opt{display:flex;align-items:center;gap:16px;padding:20px 24px;background:rgba(255,255,255,0.03);border:3px solid rgba(255,255,255,0.1);border-radius:16px;cursor:pointer;font-size:22px;font-weight:700;transition:all 0.2s}
-  .quiz-opt:hover{border-color:rgba(255,255,255,0.3)}
+  .quiz-opt{display:flex;align-items:center;gap:16px;padding:20px 24px;background:rgba(255,255,255,0.03);border:3px solid rgba(255,255,255,0.1);border-radius:16px;cursor:pointer;font-size:22px;font-weight:700;transition:all 0.2s;touch-action:manipulation;-webkit-tap-highlight-color:transparent;min-height:70px}
+  .quiz-opt:hover,.quiz-opt:active{border-color:rgba(255,255,255,0.3)}
   .quiz-opt.selected{border-color:var(--gold);background:rgba(212,175,55,0.1)}
   .quiz-opt.correct{border-color:var(--leaf-bright);background:rgba(95,166,122,0.2)}
   .quiz-opt.wrong{border-color:var(--danger);background:rgba(193,79,79,0.2)}
@@ -138,10 +159,10 @@
   .q-dot.done{background:var(--leaf-bright)}
   .q-dot.current{background:var(--gold)}
   
-  /* Solutions */
-  .solutions{display:flex;gap:24px;margin-top:24px}
-  .sol-card{flex:1;background:rgba(61,107,79,0.15);border:3px solid rgba(95,166,122,0.3);border-radius:20px;padding:28px;cursor:pointer;text-align:center;transition:all 0.3s}
-  .sol-card:hover,.sol-card.active{border-color:var(--leaf-bright);transform:translateY(-4px)}
+  /* Solutions - Touch-friendly */
+  .solutions{display:flex;gap:24px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+  .sol-card{flex:1;min-width:150px;max-width:200px;background:rgba(61,107,79,0.15);border:3px solid rgba(95,166,122,0.3);border-radius:20px;padding:28px;cursor:pointer;text-align:center;transition:all 0.3s;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+  .sol-card:hover,.sol-card:active,.sol-card.active{border-color:var(--leaf-bright);transform:translateY(-4px)}
   .sol-icon{font-size:48px;margin-bottom:8px}
   .sol-title{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--leaf-bright)}
   .sol-detail{margin-top:24px;padding:28px;background:rgba(255,255,255,0.03);border-radius:20px;max-width:900px;display:none}
@@ -150,13 +171,21 @@
   .sol-detail ul{list-style:none;columns:2;gap:32px}
   .sol-detail li{font-size:20px;color:var(--text-muted);margin-bottom:12px;display:flex;gap:12px}
   .sol-detail li::before{content:'→';color:var(--leaf-bright);font-weight:700}
-  
+
   /* Citations */
   .citations{display:flex;flex-direction:column;gap:24px}
   .cite-item{background:rgba(255,255,255,0.03);border-radius:16px;padding:24px 28px;border-left:4px solid var(--gold)}
   .cite-author{font-family:'Bebas Neue',sans-serif;font-size:24px;color:var(--gold);margin-bottom:6px}
   .cite-title{font-size:22px;color:var(--cream);font-style:italic;margin-bottom:6px}
   .cite-source{font-size:18px;color:var(--text-muted)}
+
+  /* Achievement Badges */
+  .badges-earned{display:flex;gap:16px;justify-content:center;margin:24px 0;flex-wrap:wrap}
+  .badge-item{display:flex;flex-direction:column;align-items:center;gap:8px;padding:16px 20px;background:rgba(212,175,55,0.1);border:2px solid var(--gold);border-radius:16px;min-width:120px}
+  .badge-item.locked{opacity:0.4;border-color:rgba(255,255,255,0.2);background:rgba(255,255,255,0.02)}
+  .badge-icon{font-size:40px}
+  .badge-name{font-family:'Bebas Neue',sans-serif;font-size:14px;color:var(--gold);text-align:center}
+  .badge-item.locked .badge-name{color:var(--text-muted)}
 
   /* Summary */
   .summary-stats{display:flex;gap:40px;margin:32px 0}
@@ -167,12 +196,27 @@
   .takeaway{flex:1;background:rgba(255,255,255,0.03);border-radius:16px;padding:24px;text-align:center}
   .takeaway-num{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold)}
   .takeaway-text{font-size:20px;color:var(--text-muted);margin-top:8px;line-height:1.4}
+
+  /* Certificate */
+  .certificate{background:linear-gradient(135deg,#f5e6d3,#e8d4b8);border-radius:20px;padding:40px;max-width:700px;width:100%;text-align:center;color:var(--earth);position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
+  .cert-border{position:absolute;inset:12px;border:3px solid var(--gold);border-radius:12px;pointer-events:none}
+  .cert-header{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:4px;color:var(--coffee);margin-bottom:8px}
+  .cert-title{font-family:'Playfair Display',serif;font-size:36px;color:var(--earth);margin-bottom:16px}
+  .cert-name{font-family:'Bebas Neue',sans-serif;font-size:48px;color:var(--gold);margin:16px 0}
+  .cert-desc{font-size:18px;color:var(--coffee);margin-bottom:24px;line-height:1.5}
+  .cert-badges{display:flex;justify-content:center;gap:24px;margin:24px 0}
+  .cert-badge{display:flex;flex-direction:column;align-items:center;gap:4px}
+  .cert-badge-icon{font-size:32px}
+  .cert-badge-name{font-size:12px;color:var(--coffee)}
+  .cert-footer{display:flex;justify-content:space-between;margin-top:24px;font-size:14px;color:var(--coffee)}
+  .cert-score{font-family:'JetBrains Mono',monospace;font-weight:700}
   
-  /* Achievement */
+  /* Achievement Toast */
   .achievement{position:fixed;bottom:24px;right:24px;background:var(--gold);color:var(--earth);padding:20px 28px;border-radius:16px;display:flex;align-items:center;gap:16px;transform:translateX(400px);transition:transform 0.4s;z-index:200}
   .achievement.show{transform:translateX(0)}
   .achievement-icon{font-size:36px}
   .achievement h4{font-family:'Bebas Neue',sans-serif;font-size:22px}
+  .achievement p{font-size:14px;opacity:0.8}
 
   /* Mobile Responsive */
   @media(max-width:900px){
@@ -181,17 +225,28 @@
     .progress-track{width:100px;margin-left:12px}
     .stat{font-size:18px}
     .stat-label{font-size:10px;margin-right:4px}
-    .stage{padding:16px 20px}
+    .stage{padding:16px 20px;top:50px;overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .screen.active{justify-content:flex-start;padding-top:10px;padding-bottom:30px}
     
     .title{font-size:clamp(48px,14vw,80px)}
     .headline{font-size:clamp(24px,6vw,36px)}
     .subtext{font-size:clamp(16px,4vw,20px);margin-top:12px}
     
-    .btn{padding:16px 32px;font-size:clamp(16px,4vw,20px)}
+    .btn{padding:16px 32px;font-size:clamp(16px,4vw,20px);min-height:54px}
     .btn-row{flex-direction:column;gap:12px;width:100%;max-width:300px}
     .btn-row .btn{width:100%}
     
     .input-name{font-size:20px;padding:14px 20px;max-width:300px}
+    
+    .character{flex-direction:column;align-items:center;gap:16px;margin-top:16px}
+    .char-avatar{width:70px;height:70px;font-size:32px}
+    .char-bubble{padding:18px 20px}
+    .char-bubble::before{display:none}
+    .char-name{font-size:16px}
+    .char-text{font-size:16px}
+    .story-choices{gap:12px;margin-top:16px}
+    .story-choice{padding:16px 20px;font-size:16px;min-height:60px}
+    .choice-icon{font-size:22px}
     
     .products{flex-direction:column;gap:20px;margin-top:20px}
     .product{width:100%;max-width:340px;padding:24px}
@@ -220,18 +275,23 @@
     .quiz-box{padding:24px 20px}
     .quiz-q{font-size:clamp(20px,5vw,28px);margin-bottom:20px}
     .quiz-opts{grid-template-columns:1fr;gap:12px}
-    .quiz-opt{padding:16px 18px;font-size:18px}
+    .quiz-opt{padding:16px 18px;font-size:18px;min-height:60px}
     .quiz-feedback{font-size:18px;padding:16px}
     .q-dot{width:40px;height:6px}
     
     .solutions{flex-wrap:wrap;gap:12px;margin-top:16px}
-    .sol-card{flex:1 1 45%;min-width:140px;padding:18px}
+    .sol-card{flex:1 1 45%;min-width:140px;max-width:none;padding:18px}
     .sol-icon{font-size:36px}
     .sol-title{font-size:18px}
     .sol-detail{padding:20px;margin-top:16px}
     .sol-detail h3{font-size:22px}
     .sol-detail ul{columns:1}
     .sol-detail li{font-size:16px}
+    
+    .badges-earned{gap:12px}
+    .badge-item{padding:12px 14px;min-width:90px}
+    .badge-icon{font-size:28px}
+    .badge-name{font-size:12px}
     
     .citations{gap:16px}
     .cite-item{padding:18px 20px}
@@ -240,13 +300,20 @@
     .cite-source{font-size:14px}
     
     .summary-stats{flex-direction:row;gap:16px;margin:20px 0}
-    .summary-stat{padding:16px 20px;flex:1}
-    .summary-value{font-size:36px}
-    .summary-label{font-size:12px}
+    .summary-stat{padding:16px 12px;flex:1}
+    .summary-value{font-size:32px}
+    .summary-label{font-size:11px}
     .takeaways{flex-direction:column;gap:12px;width:100%;max-width:400px}
     .takeaway{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
     .takeaway-num{font-size:28px;line-height:1}
     .takeaway-text{font-size:14px;text-align:left}
+    
+    .certificate{padding:28px 20px;max-width:100%}
+    .cert-title{font-size:28px}
+    .cert-name{font-size:36px}
+    .cert-desc{font-size:14px}
+    .cert-badges{gap:16px;flex-wrap:wrap}
+    .cert-badge-icon{font-size:24px}
     
     .achievement{bottom:16px;right:16px;left:16px;padding:16px 20px}
     .achievement-icon{font-size:28px}
@@ -255,53 +322,97 @@
 
   @media(max-width:480px){
     .hud{height:44px;padding:0 12px}
-    .hud-logo{font-size:16px}
-    .progress-track{width:60px;height:6px}
-    .stat{font-size:16px}
-    .hud-right{gap:12px}
+    .hud-logo{font-size:14px;letter-spacing:1px}
+    .progress-track{width:50px;height:6px}
+    .stat{font-size:14px}
+    .stat-label{display:none}
+    .hud-right{gap:8px}
     .stage{padding:12px 16px;top:44px}
+    .screen.active{padding-bottom:40px}
     
     .title{font-size:clamp(36px,12vw,56px)}
     .headline{font-size:clamp(20px,5.5vw,28px)}
     .subtext{font-size:clamp(14px,3.5vw,18px)}
+    
+    .btn{padding:14px 24px;min-height:50px}
+    .btn-row{gap:10px}
+    
+    .char-avatar{width:56px;height:56px;font-size:26px}
+    .char-bubble{padding:14px 16px}
+    .char-text{font-size:14px}
+    .story-choice{padding:14px 16px;font-size:14px;min-height:54px}
+    .choice-icon{font-size:20px}
     
     .product{padding:20px}
     .product-icon{font-size:48px}
     .product-name{font-size:24px}
     .product-price{font-size:28px}
     
-    .pie-wrap{width:140px;height:140px}
-    .pie-center{width:70px;height:70px}
-    .pie-value{font-size:24px}
-    .pie-label{font-size:10px}
-    .bar-label{width:60px;font-size:12px}
-    .bar-track{height:28px}
-    .bar-pct{font-size:14px;min-width:40px}
-    .farmer-amount{font-size:32px}
-    .farmer-title{font-size:14px}
+    .pie-wrap{width:120px;height:120px}
+    .pie-center{width:60px;height:60px}
+    .pie-value{font-size:20px}
+    .pie-label{font-size:9px}
+    .bar-label{width:55px;font-size:11px}
+    .bar-track{height:24px}
+    .bar-pct{font-size:12px;min-width:36px}
+    .farmer-box{padding:12px 16px}
+    .farmer-amount{font-size:28px}
+    .farmer-title{font-size:12px}
     
-    .quiz-q{font-size:clamp(18px,4.5vw,24px)}
-    .quiz-opt{padding:14px 16px;font-size:16px;gap:12px}
-    .quiz-dot{width:20px;height:20px}
+    .facts{gap:12px}
+    .fact{padding:14px 16px}
+    .fact-title{font-size:18px}
+    .fact-desc{font-size:14px}
     
-    .sol-card{padding:14px}
+    .quiz-box{padding:20px 16px}
+    .quiz-q{font-size:clamp(16px,4.5vw,22px);margin-bottom:16px}
+    .quiz-opt{padding:12px 14px;font-size:14px;gap:10px;min-height:50px}
+    .quiz-dot{width:18px;height:18px}
+    .quiz-feedback{font-size:14px;padding:12px}
+    .q-dot{width:30px;height:5px}
+    
+    .sol-card{padding:14px;min-width:45%}
     .sol-icon{font-size:28px;margin-bottom:4px}
-    .sol-title{font-size:16px}
+    .sol-title{font-size:14px}
+    .sol-detail{padding:16px}
+    .sol-detail h3{font-size:18px}
+    .sol-detail li{font-size:14px}
     
     .summary-stats{gap:8px;margin:16px 0}
-    .summary-stat{padding:12px 8px}
-    .summary-value{font-size:28px}
-    .summary-label{font-size:10px}
+    .summary-stat{padding:10px 6px}
+    .summary-value{font-size:26px}
+    .summary-label{font-size:9px}
     .takeaways{gap:10px}
     .takeaway{padding:12px 14px;gap:10px}
-    .takeaway-num{font-size:24px}
-    .takeaway-text{font-size:13px}
+    .takeaway-num{font-size:22px}
+    .takeaway-text{font-size:12px}
+    
+    .badges-earned{gap:8px}
+    .badge-item{padding:10px 10px;min-width:65px}
+    .badge-icon{font-size:22px}
+    .badge-name{font-size:9px}
     
     .citations{gap:12px}
     .cite-item{padding:14px 16px}
     .cite-author{font-size:16px}
     .cite-title{font-size:14px}
-    .cite-source{font-size:12px}
+    .cite-source{font-size:11px}
+    
+    .certificate{padding:20px 16px}
+    .cert-border{inset:8px}
+    .cert-header{font-size:12px;letter-spacing:2px}
+    .cert-title{font-size:20px}
+    .cert-name{font-size:26px}
+    .cert-desc{font-size:11px}
+    .cert-badges{gap:10px}
+    .cert-badge-icon{font-size:18px}
+    .cert-badge-name{font-size:9px}
+    .cert-footer{font-size:10px;flex-direction:column;gap:4px;align-items:center}
+    
+    .achievement{padding:14px 16px}
+    .achievement-icon{font-size:24px}
+    .achievement h4{font-size:16px}
+    .achievement p{font-size:12px}
   }
 </style>
 </head>
@@ -321,8 +432,11 @@
 </header>
 
 <div class="achievement" id="achievement">
-  <div class="achievement-icon">🏆</div>
-  <div><h4 id="achievementTitle">Achievement!</h4></div>
+  <div class="achievement-icon" id="achIcon">🏆</div>
+  <div>
+    <h4 id="achievementTitle">Achievement!</h4>
+    <p id="achievementDesc"></p>
+  </div>
 </div>
 
 <main class="stage">
@@ -339,18 +453,31 @@
     </div>
   </section>
 
-  <!-- SCREEN 1: Intro -->
+  <!-- SCREEN 1: Intro with Amara -->
   <section id="screen-1" class="screen">
-    <h2 class="headline">Welcome, <span id="displayName">Player</span></h2>
-    <p class="subtext">You're visiting London for the first time. Walking through a Tesco supermarket, you head to the coffee aisle. Two bags catch your eye...</p>
+    <h2 class="headline">Welcome, <span id="displayName">Leo</span></h2>
+    <div class="character">
+      <div class="char-avatar">👩🏾‍🌾</div>
+      <div class="char-bubble">
+        <div class="char-name">Amara — Coffee Farmer, Ethiopia</div>
+        <div class="char-text">"Hello! I'm Amara. I've been growing coffee in Sidama for 20 years. Today, I want to show you something important about where your coffee really comes from... and where your money really goes."</div>
+      </div>
+    </div>
     <div class="btn-row">
-      <button class="btn btn-gold" onclick="show(2)">Go to Coffee Aisle →</button>
+      <button class="btn btn-gold" onclick="show(2)">Nice to meet you, Amara →</button>
     </div>
   </section>
 
-  <!-- SCREEN 2: Product Choice -->
+  <!-- SCREEN 2: Story Choice 1 -->
   <section id="screen-2" class="screen">
-    <h2 class="headline">Which coffee do you choose?</h2>
+    <h2 class="headline">Your Journey Begins</h2>
+    <div class="character">
+      <div class="char-avatar">👩🏾‍🌾</div>
+      <div class="char-bubble">
+        <div class="char-name">Amara</div>
+        <div class="char-text">"You're in a London supermarket, standing in the coffee aisle. I want you to choose a coffee — then I'll show you what happens to your money. Which bag catches your eye?"</div>
+      </div>
+    </div>
     <div class="products">
       <div class="product fair" onclick="pickProduct('fair')">
         <div class="product-icon">☕</div>
@@ -369,7 +496,7 @@
 
   <!-- SCREEN 3: Money Breakdown -->
   <section id="screen-3" class="screen">
-    <h2 class="headline">Where does your money go?</h2>
+    <h2 class="headline">Where Does Your Money Go?</h2>
     <div class="breakdown" style="margin-top:32px">
       <div class="pie-wrap">
         <div class="pie" id="pie"></div>
@@ -406,21 +533,36 @@
       </div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-gold" onclick="showFacts()">Why? →</button>
+      <button class="btn btn-gold" onclick="showStoryReaction()">What does Amara think? →</button>
     </div>
   </section>
 
-  <!-- SCREEN 4: Facts -->
+  <!-- SCREEN 4: Amara's Reaction (Branching) -->
   <section id="screen-4" class="screen">
+    <h2 class="headline" id="reactionTitle">Amara's Response</h2>
+    <div class="character">
+      <div class="char-avatar">👩🏾‍🌾</div>
+      <div class="char-bubble">
+        <div class="char-name">Amara</div>
+        <div class="char-text" id="amaraReaction">Reaction text</div>
+      </div>
+    </div>
+    <div class="story-choices" id="storyChoices">
+      <!-- Dynamic choices inserted here -->
+    </div>
+  </section>
+
+  <!-- SCREEN 5: Facts -->
+  <section id="screen-5" class="screen">
     <h2 class="headline" id="factsTitle">The Hidden Truth</h2>
     <div class="facts" id="factsGrid"></div>
     <div class="btn-row">
-      <button class="btn btn-gold" onclick="startQuiz()">Quiz Time →</button>
+      <button class="btn btn-gold" onclick="startQuiz()">Test Your Knowledge →</button>
     </div>
   </section>
 
-  <!-- SCREEN 5: Quiz -->
-  <section id="screen-5" class="screen">
+  <!-- SCREEN 6: Quiz -->
+  <section id="screen-6" class="screen">
     <div class="quiz-box">
       <div class="quiz-progress" id="quizProgress"></div>
       <p class="quiz-q" id="quizQ">Question?</p>
@@ -430,9 +572,42 @@
     </div>
   </section>
 
-  <!-- SCREEN 6: Solutions -->
-  <section id="screen-6" class="screen">
-    <h2 class="headline">What Would REAL Fairness Look Like?</h2>
+  <!-- SCREEN 7: Story Choice 2 - What to do? -->
+  <section id="screen-7" class="screen">
+    <h2 class="headline">What Will You Do?</h2>
+    <div class="character">
+      <div class="char-avatar">👩🏾‍🌾</div>
+      <div class="char-bubble">
+        <div class="char-name">Amara</div>
+        <div class="char-text">"Now you know the truth. The question is — what can we do about it? I have some ideas, but I want to hear your thoughts first."</div>
+      </div>
+    </div>
+    <div class="story-choices">
+      <div class="story-choice" onclick="chooseAction('awareness')">
+        <span class="choice-icon">📢</span>
+        <span>"We need to spread awareness about this!"</span>
+      </div>
+      <div class="story-choice" onclick="chooseAction('system')">
+        <span class="choice-icon">⚙️</span>
+        <span>"The whole system needs to change."</span>
+      </div>
+      <div class="story-choice" onclick="chooseAction('local')">
+        <span class="choice-icon">🏭</span>
+        <span>"Farmers should process coffee locally."</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCREEN 8: Solutions -->
+  <section id="screen-8" class="screen">
+    <h2 class="headline">Real Solutions for Real Fairness</h2>
+    <div class="character" style="margin-bottom:16px">
+      <div class="char-avatar">👩🏾‍🌾</div>
+      <div class="char-bubble">
+        <div class="char-name">Amara</div>
+        <div class="char-text" id="amaraSolution">"Great thinking! Here are the solutions that could actually help farmers like me..."</div>
+      </div>
+    </div>
     <div class="solutions">
       <div class="sol-card" onclick="showSol('local')" id="sol-local">
         <div class="sol-icon">🏭</div>
@@ -453,13 +628,16 @@
     </div>
     <div class="sol-detail" id="solDetail"></div>
     <div class="btn-row">
-      <button class="btn btn-gold" onclick="showSummary()">Results →</button>
+      <button class="btn btn-gold" onclick="showSummary()">See Your Results →</button>
     </div>
   </section>
 
-  <!-- SCREEN 7: Summary -->
-  <section id="screen-7" class="screen">
+  <!-- SCREEN 9: Summary with Badges -->
+  <section id="screen-9" class="screen">
     <h2 class="headline">Journey Complete!</h2>
+    <div class="badges-earned" id="badgesEarned">
+      <!-- Badges inserted dynamically -->
+    </div>
     <div class="summary-stats">
       <div class="summary-stat">
         <div class="summary-value" id="finalScore">0</div>
@@ -490,12 +668,35 @@
     </div>
     <div class="btn-row">
       <button class="btn btn-gold" onclick="restart()">Play Again</button>
-      <button class="btn btn-ghost" onclick="show(8)">View Citations</button>
+      <button class="btn btn-ghost" onclick="show(10)">Get Certificate</button>
+      <button class="btn btn-ghost" onclick="show(11)">Citations</button>
     </div>
   </section>
 
-  <!-- SCREEN 8: Citations -->
-  <section id="screen-8" class="screen">
+  <!-- SCREEN 10: Certificate -->
+  <section id="screen-10" class="screen">
+    <div class="certificate" id="certificate">
+      <div class="cert-border"></div>
+      <div class="cert-header">CERTIFICATE OF COMPLETION</div>
+      <div class="cert-title">The Fair Trade Myth</div>
+      <div class="cert-name" id="certName">Leo</div>
+      <div class="cert-desc">has successfully completed the Fair Trade Myth challenge and demonstrated understanding of global trade inequalities and pathways to genuine fairness.</div>
+      <div class="cert-badges" id="certBadges">
+        <!-- Badges inserted here -->
+      </div>
+      <div class="cert-footer">
+        <span class="cert-score">Score: <span id="certScore">0</span> pts</span>
+        <span id="certDate"></span>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-ghost" onclick="show(9)">← Back</button>
+      <button class="btn btn-gold" onclick="downloadCertificate()">📥 Download</button>
+    </div>
+  </section>
+
+  <!-- SCREEN 11: Citations -->
+  <section id="screen-11" class="screen">
     <h2 class="headline">Sources & Citations</h2>
     <div class="citations" style="margin-top:32px;max-width:1000px;text-align:left">
       <div class="cite-item">
@@ -515,23 +716,52 @@
       </div>
     </div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="show(7)">← Back</button>
+      <button class="btn btn-ghost" onclick="show(9)">← Back</button>
     </div>
   </section>
 
 </main>
 
 <script>
-const state = { screen:0, product:null, score:0, knowledge:0, qi:0, qc:0, answered:[], currentQuiz:[], playerName:'Leo' };
+const state = { 
+  screen:0, 
+  product:null, 
+  score:0, 
+  knowledge:0, 
+  qi:0, 
+  qc:0, 
+  answered:[], 
+  currentQuiz:[], 
+  playerName:'Leo',
+  actionChoice: null,
+  badges: {
+    explorer: false,    // Started the journey
+    truthSeeker: false, // Saw the money breakdown
+    scholar: false,     // Got 2+ quiz questions right
+    advocate: false,    // Made an action choice
+    mythBuster: false   // Completed the game
+  }
+};
 
-// FAIR TRADE quiz - focuses on certification myths
+const TOTAL_SCREENS = 12;
+
+// Badge definitions
+const badgeDefs = {
+  explorer: { icon: '🧭', name: 'Explorer', desc: 'Started the journey' },
+  truthSeeker: { icon: '🔍', name: 'Truth Seeker', desc: 'Discovered the money trail' },
+  scholar: { icon: '📚', name: 'Scholar', desc: 'Aced the quiz' },
+  advocate: { icon: '📢', name: 'Advocate', desc: 'Chose to take action' },
+  mythBuster: { icon: '💡', name: 'Myth Buster', desc: 'Completed the challenge' }
+};
+
+// FAIR TRADE quiz
 const quizFair = [
-  { q:"Who sets Fair Trade certification standards?", opts:["African farmers","Northern organizations","United Nations","Local governments"], a:1 },
+  { q:"Who sets Fair Trade certification standards?", opts:["African farmers","Northern organizations","United Nations","Governments"], a:1 },
   { q:"Do certification fees help or burden farmers?", opts:["Help — they're free","Burden — farmers pay them","No fees exist","Governments pay"], a:1 },
   { q:"Does a Fair Trade label mean farmers control processing?", opts:["Yes, always","No — ownership unchanged","Only in Africa","Only for coffee"], a:1 }
 ];
 
-// NORMAL quiz - focuses on market pressures
+// NORMAL quiz
 const quizNormal = [
   { q:"What happens to farmers when prices are low?", opts:["They're protected","They absorb all the risk","Brands help them","Nothing changes"], a:1 },
   { q:"Who captures most value in the supply chain?", opts:["Farmers","Retailers & brands","Shipping companies","Consumers"], a:1 },
@@ -545,8 +775,6 @@ const sols = {
   cert: { t:"Fair Certification", p:["Lower certification fees","African-led verification","Transparent accounting","Long-term contracts"] }
 };
 
-const TOTAL_SCREENS = 9;
-
 function show(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('screen-'+id).classList.add('active');
@@ -557,10 +785,19 @@ function show(id) {
 function addScore(n) { state.score += n; document.getElementById('scoreValue').textContent = state.score; }
 function addKnow(n) { state.knowledge = Math.min(100, state.knowledge + n); document.getElementById('knowledgeValue').textContent = state.knowledge+'%'; }
 
-function toast(t) {
-  document.getElementById('achievementTitle').textContent = t;
+function unlockBadge(key) {
+  if (state.badges[key]) return; // Already unlocked
+  state.badges[key] = true;
+  const badge = badgeDefs[key];
+  toast(badge.icon, badge.name, badge.desc);
+}
+
+function toast(icon, title, desc) {
+  document.getElementById('achIcon').textContent = icon || '🏆';
+  document.getElementById('achievementTitle').textContent = title;
+  document.getElementById('achievementDesc').textContent = desc || '';
   document.getElementById('achievement').classList.add('show');
-  setTimeout(() => document.getElementById('achievement').classList.remove('show'), 2500);
+  setTimeout(() => document.getElementById('achievement').classList.remove('show'), 3000);
 }
 
 function startGame() { 
@@ -569,13 +806,12 @@ function startGame() {
   document.getElementById('displayName').textContent = state.playerName;
   show(1); 
   addScore(5); 
-  addKnow(5); 
-  toast('Welcome, ' + state.playerName + '!'); 
+  addKnow(5);
+  unlockBadge('explorer');
 }
 
 function pickProduct(p) {
   state.product = p;
-  // Set the quiz based on product choice
   state.currentQuiz = (p === 'fair') ? quizFair : quizNormal;
   addScore(10); addKnow(10);
   show(3);
@@ -589,11 +825,64 @@ function pickProduct(p) {
     document.getElementById('pie').style.background = `conic-gradient(var(--coffee-light) 0 ${b.r*3.6}deg, var(--earth-light) 0 ${(b.r+b.b)*3.6}deg, #555 0 ${(b.r+b.b+b.s)*3.6}deg, var(--danger-bright) 0 360deg)`;
     document.getElementById('piePct').textContent = b.f+'%';
     document.getElementById('farmerAmt').textContent = '£'+(price*b.f/100).toFixed(2);
+    
+    // Unlock badge after seeing breakdown
+    setTimeout(() => unlockBadge('truthSeeker'), 1500);
   }, 300);
 }
 
+function showStoryReaction() {
+  show(4);
+  addKnow(5);
+  
+  const reactionEl = document.getElementById('amaraReaction');
+  const choicesEl = document.getElementById('storyChoices');
+  
+  if (state.product === 'fair') {
+    document.getElementById('reactionTitle').textContent = "Amara's Thoughts on Fair Trade";
+    reactionEl.innerHTML = `"You chose the Fair Trade bag. Many people think that helps farmers like me. But let me tell you a secret... <strong>I still only got ${(4.99 * 0.06).toFixed(2)} pounds</strong> from that sale. The certification costs me money, and the standards? They were written in Europe, not here in Ethiopia."`;
+    choicesEl.innerHTML = `
+      <div class="story-choice" onclick="storyChoice('surprised')">
+        <span class="choice-icon">😮</span>
+        <span>"That's shocking! I thought Fair Trade meant fair..."</span>
+      </div>
+      <div class="story-choice" onclick="storyChoice('curious')">
+        <span class="choice-icon">🤔</span>
+        <span>"Why doesn't more money reach you?"</span>
+      </div>
+      <div class="story-choice" onclick="storyChoice('angry')">
+        <span class="choice-icon">😤</span>
+        <span>"That's not right. Who's taking all the money?"</span>
+      </div>
+    `;
+  } else {
+    document.getElementById('reactionTitle').textContent = "Amara's Thoughts on Cheap Coffee";
+    reactionEl.innerHTML = `"You chose the cheaper bag. I understand — price matters. But here's the truth: <strong>I got even less</strong> from that one. When prices are pushed down, we farmers feel it first. There's no safety net for us."`;
+    choicesEl.innerHTML = `
+      <div class="story-choice" onclick="storyChoice('guilty')">
+        <span class="choice-icon">😔</span>
+        <span>"I feel bad now... I didn't know."</span>
+      </div>
+      <div class="story-choice" onclick="storyChoice('curious')">
+        <span class="choice-icon">🤔</span>
+        <span>"Why is the system set up this way?"</span>
+      </div>
+      <div class="story-choice" onclick="storyChoice('practical')">
+        <span class="choice-icon">💭</span>
+        <span>"What can consumers actually do?"</span>
+      </div>
+    `;
+  }
+}
+
+function storyChoice(choice) {
+  addScore(10);
+  addKnow(10);
+  showFacts();
+}
+
 function showFacts() {
-  show(4); addKnow(10);
+  show(5);
   const g = document.getElementById('factsGrid');
   const titleEl = document.getElementById('factsTitle');
   
@@ -622,7 +911,7 @@ function startQuiz() {
   state.qi = 0; 
   state.qc = 0; 
   state.answered = []; 
-  show(5); 
+  show(6); 
   renderQ(); 
 }
 
@@ -657,10 +946,33 @@ function checkAns() {
   fb.textContent = correct ? '✓ Correct!' : '✗ Wrong — Answer: ' + q.opts[q.a];
   document.getElementById('quizNav').innerHTML = state.qi < state.currentQuiz.length-1 
     ? '<button class="btn btn-gold" onclick="nextQ()">Next →</button>'
-    : '<button class="btn btn-gold" onclick="show(6)">Solutions →</button>';
+    : '<button class="btn btn-gold" onclick="finishQuiz()">Continue →</button>';
 }
 
 function nextQ() { state.qi++; state.sel = undefined; renderQ(); }
+
+function finishQuiz() {
+  if (state.qc >= 2) {
+    unlockBadge('scholar');
+  }
+  show(7);
+}
+
+function chooseAction(action) {
+  state.actionChoice = action;
+  addScore(15);
+  addKnow(10);
+  unlockBadge('advocate');
+  
+  const responses = {
+    awareness: '"Yes! Awareness is the first step. But we also need structural changes..."',
+    system: '"Exactly! The system itself is the problem. Let me show you what real change looks like..."',
+    local: '"You understand! If we process coffee here in Ethiopia, we keep much more of the value..."'
+  };
+  
+  document.getElementById('amaraSolution').textContent = responses[action];
+  show(8);
+}
 
 function showSol(k) {
   document.querySelectorAll('.sol-card').forEach(c => c.classList.remove('active'));
@@ -671,15 +983,95 @@ function showSol(k) {
 }
 
 function showSummary() {
-  show(7);
+  unlockBadge('mythBuster');
+  show(9);
+  
   document.getElementById('finalScore').textContent = state.score;
   document.getElementById('finalKnowledge').textContent = state.knowledge + '%';
   document.getElementById('finalQuiz').textContent = state.qc + '/' + state.currentQuiz.length;
-  toast('Myth Buster!');
+  
+  // Render badges
+  const badgesEl = document.getElementById('badgesEarned');
+  badgesEl.innerHTML = '';
+  for (const [key, unlocked] of Object.entries(state.badges)) {
+    const badge = badgeDefs[key];
+    badgesEl.innerHTML += `
+      <div class="badge-item ${unlocked ? '' : 'locked'}">
+        <div class="badge-icon">${badge.icon}</div>
+        <div class="badge-name">${badge.name}</div>
+      </div>
+    `;
+  }
+  
+  // Setup certificate
+  document.getElementById('certName').textContent = state.playerName;
+  document.getElementById('certScore').textContent = state.score;
+  document.getElementById('certDate').textContent = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+  
+  // Render certificate badges
+  const certBadgesEl = document.getElementById('certBadges');
+  certBadgesEl.innerHTML = '';
+  for (const [key, unlocked] of Object.entries(state.badges)) {
+    if (unlocked) {
+      const badge = badgeDefs[key];
+      certBadgesEl.innerHTML += `
+        <div class="cert-badge">
+          <div class="cert-badge-icon">${badge.icon}</div>
+          <div class="cert-badge-name">${badge.name}</div>
+        </div>
+      `;
+    }
+  }
+}
+
+function downloadCertificate() {
+  // Create a canvas to render the certificate
+  const cert = document.getElementById('certificate');
+  
+  // Use html2canvas-like approach with SVG
+  const earnedBadges = Object.entries(state.badges)
+    .filter(([k,v]) => v)
+    .map(([k]) => badgeDefs[k]);
+  
+  const badgesStr = earnedBadges.map(b => `${b.icon} ${b.name}`).join('  •  ');
+  
+  const svgContent = `
+    <svg xmlns="http://www.w3.org/2000/svg" width="800" height="500">
+      <defs>
+        <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style="stop-color:#f5e6d3"/>
+          <stop offset="100%" style="stop-color:#e8d4b8"/>
+        </linearGradient>
+      </defs>
+      <rect width="800" height="500" fill="url(#bg)" rx="20"/>
+      <rect x="15" y="15" width="770" height="470" fill="none" stroke="#d4af37" stroke-width="3" rx="12"/>
+      <text x="400" y="60" text-anchor="middle" font-family="Arial" font-size="16" fill="#6f4e37" letter-spacing="4">CERTIFICATE OF COMPLETION</text>
+      <text x="400" y="110" text-anchor="middle" font-family="Georgia" font-size="36" fill="#2d1810">The Fair Trade Myth</text>
+      <text x="400" y="180" text-anchor="middle" font-family="Arial" font-size="42" fill="#d4af37" font-weight="bold">${state.playerName}</text>
+      <text x="400" y="230" text-anchor="middle" font-family="Arial" font-size="14" fill="#6f4e37">has successfully completed the Fair Trade Myth challenge</text>
+      <text x="400" y="255" text-anchor="middle" font-family="Arial" font-size="14" fill="#6f4e37">and demonstrated understanding of global trade inequalities.</text>
+      <text x="400" y="320" text-anchor="middle" font-family="Arial" font-size="18" fill="#2d1810">${badgesStr}</text>
+      <text x="100" y="450" font-family="monospace" font-size="14" fill="#6f4e37" font-weight="bold">Score: ${state.score} pts</text>
+      <text x="700" y="450" text-anchor="end" font-family="Arial" font-size="14" fill="#6f4e37">${new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</text>
+    </svg>
+  `;
+  
+  const blob = new Blob([svgContent], { type: 'image/svg+xml' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `FairTradeMyth_Certificate_${state.playerName}.svg`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  
+  toast('📥', 'Downloaded!', 'Certificate saved');
 }
 
 function restart() {
-  state.screen=0; state.product=null; state.score=0; state.knowledge=0; state.qi=0; state.qc=0; state.answered=[]; state.currentQuiz=[]; state.playerName='Leo';
+  state.screen=0; state.product=null; state.score=0; state.knowledge=0; state.qi=0; state.qc=0; state.answered=[]; state.currentQuiz=[]; state.playerName='Leo'; state.actionChoice=null;
+  state.badges = { explorer:false, truthSeeker:false, scholar:false, advocate:false, mythBuster:false };
   document.getElementById('scoreValue').textContent = '0';
   document.getElementById('knowledgeValue').textContent = '0%';
   document.getElementById('playerName').value = 'Leo';
